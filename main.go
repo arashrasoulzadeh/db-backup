@@ -136,13 +136,37 @@ func getTableNames() string {
 	return strings.Replace(tableFlag, ",", " ", 3)
 }
 
+// Exists reports whether the named file or directory exists.
+func Exists(name string) bool {
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
 /**
 create bash command and store it
 */
 func runDumpCommand() {
 	console("dumping database...")
+	// Get the current working directory
+	curr_wd, err := os.Getwd()
 
-	bashCommand = "mysqldump -h" +
+	if err != nil {
+
+		fmt.Println(err)
+
+		os.Exit(1)
+	}
+
+	dump_address := "mysqldump"
+	if Exists(curr_wd + "/mysqldump") {
+		dump_address = curr_wd + "/mysqldump"
+	}
+
+	bashCommand = dump_address + " -h" +
 		dbHostname +
 		" -P" + dbPortNumber +
 		" -u " + dbUsername +
@@ -150,10 +174,10 @@ func runDumpCommand() {
 		dbDatabase + " " +
 		getTableNames() + "  > " +
 		getSqlOutput()
-
-	_, err := exec.Command("sh", "-c", bashCommand).Output()
+	_, err = exec.Command("sh", "-c", bashCommand).Output()
 	if err != nil {
 		console("Error! Export Failed!")
+		console(err.Error())
 		removeMainFile()
 		os.Exit(0)
 	}
@@ -270,6 +294,14 @@ func readEnv() {
 	dbPortNumber = config["DB_PORT"]
 }
 
+func readOsEnv() {
+	dbDatabase = os.Getenv("DB_DATABASE")
+	dbHostname = os.Getenv("DB_HOST")
+	dbUsername = os.Getenv("DB_USERNAME")
+	dbPassword = os.Getenv("DB_PASSWORD")
+	dbPortNumber = os.Getenv("DB_PORT")
+}
+
 /**
 get iso Date & time
 */
@@ -296,6 +328,8 @@ func main() {
 	parseFlags()
 	if configFile != "" {
 		readEnv()
+	} else {
+		readOsEnv()
 	}
 
 	if importFile != "" {
