@@ -166,9 +166,9 @@ func runDumpCommand() {
 		dump_address = curr_wd + "/mysqldump"
 	}
 
-	bashCommand = dump_address + " -h" +
+	bashCommand = dump_address + " -h " +
 		dbHostname +
-		" -P" + dbPortNumber +
+		" -P " + dbPortNumber +
 		" -u " + dbUsername +
 		" -p" + dbPassword + " " +
 		dbDatabase + " " +
