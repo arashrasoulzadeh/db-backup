@@ -29,6 +29,14 @@ gobackup -f gz -config /laravel/.env -n out
 ```
 This command will create a file named `out` and `out.gz` by dumping all tables with connection info of `.env` file
 
+### environment variables
+you can also set the following environment variables:
+- DB_DATABASE
+- DB_USER
+- DB_PASS
+- DB_HOST
+- DB_PORT
+
 ### Import Command
 You can also import a sql file with any of these mime-types (`sql`,`gz`,`zip`):
 ```bash
