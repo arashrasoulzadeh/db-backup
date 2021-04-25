@@ -174,6 +174,7 @@ func runDumpCommand() {
 		dbDatabase + " " +
 		getTableNames() + "  > " +
 		getSqlOutput()
+	fmt.Println(bashCommand)
 	_, err = exec.Command("sh", "-c", bashCommand).Output()
 	if err != nil {
 		console("Error! Export Failed!")
